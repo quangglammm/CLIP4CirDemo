@@ -234,4 +234,7 @@ Take also a look to our most recent work:
 }
 ```
 
+## Acknowledgements
 
+This work was partially supported by the European Commission under European Horizon 2020 Programme, grant number
+101004545 - ReInHerit.
