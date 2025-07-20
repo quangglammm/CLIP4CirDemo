@@ -10,6 +10,9 @@ from torchvision.transforms import Compose, Resize, CenterCrop, ToTensor, Normal
 server_base_path = Path(__file__).absolute().parent.absolute()
 data_path = Path(__file__).absolute().parent.absolute() / 'data'
 
+fashioniq_path = Path('/kaggle/input/fashion-iq-dataset')
+cirr_path = Path('/kaggle/input/cirr-cir')
+
 
 def _convert_image_to_rgb(image):
     return image.convert("RGB")
@@ -102,7 +105,7 @@ class FashionIQDataset(Dataset):
         self.image_names: list = []
         for dress_type in dress_types:
             with open(
-                    server_base_path / 'fashionIQ_dataset' / 'image_splits' / f'split.{dress_type}.{split}.json') as f:
+                    fashioniq_path / 'fashionIQ_dataset' / 'image_splits' / f'split.{dress_type}.{split}.json') as f:
                 self.image_names.extend(json.load(f))
 
         print(f"FashionIQ {split} - {dress_types} dataset initialized")
@@ -110,7 +113,7 @@ class FashionIQDataset(Dataset):
     def __getitem__(self, index):
         try:
             image_name = self.image_names[index]
-            image_path = server_base_path / 'fashionIQ_dataset' / 'images' / f"{image_name}.jpg"
+            image_path = fashioniq_path / 'fashionIQ_dataset' / 'images' / f"{image_name}.jpg"
             image = self.preprocess(PIL.Image.open(image_path))
             return image_name, image
 
@@ -140,7 +143,7 @@ class CIRRDataset(Dataset):
             raise ValueError("split should be in ['test1', 'val']")
 
         # get a mapping from image name to relative path
-        with open(server_base_path / 'cirr_dataset' / 'cirr' / 'image_splits' / f'split.rc2.{split}.json') as f:
+        with open(cirr_path / 'CIRR' / 'cirr' / 'image_splits' / f'split.rc2.{split}.json') as f:
             self.name_to_relpath = json.load(f)
 
         print(f"CIRR {split} dataset initialized")
@@ -148,7 +151,7 @@ class CIRRDataset(Dataset):
     def __getitem__(self, index):
         try:
             image_name = list(self.name_to_relpath.keys())[index]
-            image_path = server_base_path / 'cirr_dataset' / self.name_to_relpath[image_name]
+            image_path = cirr_path / 'CIRR' / self.name_to_relpath[image_name]
             im = PIL.Image.open(image_path)
             image = self.preprocess(im)
             return image_name, image
